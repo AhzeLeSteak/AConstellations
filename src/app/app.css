@@ -1,0 +1,12 @@
+main{
+  background-color: black;
+  height: 298px;
+  aspect-ratio: 512 / 298;
+  position: relative;
+  transform: scale(200%);
+}
+
+svg{
+  width: 100%;
+  height: 100%;
+}

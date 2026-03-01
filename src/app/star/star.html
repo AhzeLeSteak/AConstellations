@@ -1,0 +1,8 @@
+<img
+  [src]="src()"
+  class="star"
+  [style.--x]="star().x"
+  [style.--y]="star().y"
+  [style.--size]="size()"
+  (click)="$event.stopPropagation(); onClick.emit()"
+/>
