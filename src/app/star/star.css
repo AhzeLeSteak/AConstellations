@@ -1,13 +1,20 @@
-.star{
+.star {
   --x: 0;
   --y: 0;
+  --size: 7;
   position: absolute;
   left: calc(1px * var(--x));
   top: calc(1px * var(--y));
   transform: translate(calc(-1px * var(--size)), calc(-1px * var(--size)));
+
+  user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
 }
 
-.star:hover{
+.star:hover {
   cursor: pointer;
   --transform: scale(1.2);
 }

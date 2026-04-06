@@ -1,71 +1,48 @@
-import { Component, computed, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import centers from './centers.json';
-import { Star } from './star/star';
-
-type Link = {
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-}
+import { Component, computed, inject, signal } from '@angular/core';
+import { Sky } from './sky/sky';
+import { Window } from './windows.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Star],
+  imports: [Sky, FormsModule],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class App {
-  centers = centers;
+  readonly sky_height = 298;
+  readonly sky_width = 512;
 
-  selectedIndex = signal<number | null>(null);
+  dx = signal(0);
+  dy = signal(0);
 
-  blueLinks = signal<Link[]>([])
+  desired_width = signal(800);
+  scale = computed(() => this.desired_width() / this.sky_width);
 
-  nearestStars = computed(() => {
-    if (this.selectedIndex() === null) return [];
-    const selectedStar = this.centers[this.selectedIndex()!];
-    return this.centers
-      .toSorted((a, b) => dist_sqr(a, selectedStar) - dist_sqr(b, selectedStar))
-      .slice(1, 7);
-  })
+  window = inject(Window);
+  grid_width = computed(() => make_array(Math.ceil(this.window.width() / this.desired_width())));
+  grid_height = computed(() =>
+    make_array(
+      Math.ceil(
+        this.window.height() / ((this.desired_width() * this.sky_height) / this.sky_width),
+      ),
+    ),
+  );
 
-  redLinks = computed<Link[]>(() => {
-    if (!this.selectedIndex()!) return [];
-    const selectedStar = this.centers[this.selectedIndex()!];
-    const ratio = 0.2;
-    return this.nearestStars().map(star => ({
-      x1: star.x * ratio + selectedStar.x * (1 - ratio),
-      y1: star.y * ratio + selectedStar.y * (1 - ratio),
-      x2: star.x * (1 - ratio) + selectedStar.x * ratio,
-      y2: star.y * (1 - ratio) + selectedStar.y * ratio,
-    }));
-  });
-
-  protected onSelectStar(starIndex: number) {
-    const newSelectedStart = this.centers[starIndex];
-    if(this.nearestStars().includes(newSelectedStart) && this.selectedIndex()) {
-      const currentSelectedStar = this.centers[this.selectedIndex()!];
-      this.blueLinks.update(links => [...links, {
-        x1: newSelectedStart.x,
-        y1: newSelectedStart.y,
-        x2: currentSelectedStar.x,
-        y2: currentSelectedStar.y,
-      }])
+  protected scroll($event: WheelEvent) {
+    this.dy.update((dy) => dy - $event.deltaY);
+    this.dx.update((dx) => dx - $event.deltaX);
+    if (this.dy() >= this.sky_height * this.scale()) {
+      this.dy.update((dy) => dy - this.sky_height * this.scale());
     }
-    this.selectedIndex.set(starIndex);
+    if (this.dy() <= -this.sky_height * this.scale()) {
+      this.dy.update((dy) => dy + this.sky_height * this.scale());
+    }
   }
 
-  protected removeLink(link: Link) {
-    this.blueLinks.update(arr => arr.filter(el => el !== link));
-  }
+  protected readonly JSON = JSON;
 }
 
-type Point = {
-  x: number;
-  y: number;
-};
-function dist_sqr(a: Point, b: Point) {
-  return (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
+function make_array(size: number) {
+  return new Array(size + 2).fill(0).map((_, i) => i);
 }

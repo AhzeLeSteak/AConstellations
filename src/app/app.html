@@ -1,41 +1,29 @@
-<main (click)="selectedIndex.set(null)">
-  @for (center of centers; let i = $index; track i) {
-    <app-star
-      [star]="center"
-      [selected]="selectedIndex() == i"
-      (onClick)="onSelectStar(i)"
-    ></app-star>
+<div style="position: fixed; background-color: deeppink; top: 1em; right: 1em; z-index: 1000">
+  <div>
+    <input type="range" min="800" max="1400" step="100" [(ngModel)]="desired_width"/>
+  </div>
+  <span>{{ desired_width() }}</span><br/>
+  <span>{{ JSON.stringify({gridx: grid_width(), gridy: grid_height()}) }}</span><br/>
+  <span>{{ JSON.stringify({dx: dx(), dy: dy()}) }}</span>
+</div>
+
+<main (wheel)="scroll($event)"
+      [style.--sky-width]="sky_width"
+      [style.--sky-height]="sky_height"
+      [style.--dx]="dx()"
+      [style.--dy]="dy()"
+      [style.--grid-width]="grid_width().length"
+      [style.--grid-height]="grid_height().length"
+      [style.--scale]="scale()"
+>
+  @if (scale() > 0) {
+    @for (itemy of grid_height(); track itemy; let y = $index) {
+      @for (itemx of grid_width(); track itemx; let x = $index) {
+        <app-sky />
+      }
+    }
   }
-  <svg width="512" height="298">
-    @for (link of redLinks(); track link) {
-      <line
-        [attr.x1]="link.x1"
-        [attr.y1]="link.y1"
-        [attr.x2]="link.x2"
-        [attr.y2]="link.y2"
-        stroke="red"
-        stroke-width=".5"
-      />
-    }
-    @for (link of blueLinks(); track link) {
-      <line
-        [attr.x1]="link.x1"
-        [attr.y1]="link.y1"
-        [attr.x2]="link.x2"
-        [attr.y2]="link.y2"
-        stroke="blue"
-        stroke-width="1"
-      />
-      <line
-        [attr.x1]="link.x1"
-        [attr.y1]="link.y1"
-        [attr.x2]="link.x2"
-        [attr.y2]="link.y2"
-        stroke="transparent"
-        (click)="removeLink(link)"
-        stroke-width="10"
-        style="cursor: not-allowed"
-      />
-    }
-  </svg>
+
 </main>
+
+

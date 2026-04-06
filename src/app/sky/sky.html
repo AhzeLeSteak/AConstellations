@@ -1,0 +1,41 @@
+<div class="sky" [style.--debugbg]="debugColor()" (click)="starService.selectedIndex.set(null)">
+  @for (center of stars; let i = $index; track i) {
+    <app-star
+      [star]="center"
+      [selected]="starService.selectedIndex() == i"
+      (onClick)="starService.onSelectStar(i)"
+    ></app-star>
+  }
+  <svg width="512" height="298">
+    @for (link of starService.suggestionLinks(); track link) {
+      <line
+        [attr.x1]="link.x1"
+        [attr.y1]="link.y1"
+        [attr.x2]="link.x2"
+        [attr.y2]="link.y2"
+        stroke="red"
+        stroke-width=".5"
+      />
+    }
+    @for (link of starService.blueLinks(); track link) {
+      <line
+        [attr.x1]="link.x1"
+        [attr.y1]="link.y1"
+        [attr.x2]="link.x2"
+        [attr.y2]="link.y2"
+        stroke="blue"
+        stroke-width="1"
+      />
+      <line
+        [attr.x1]="link.x1"
+        [attr.y1]="link.y1"
+        [attr.x2]="link.x2"
+        [attr.y2]="link.y2"
+        stroke="transparent"
+        (click)="starService.removeLink(link)"
+        stroke-width="10"
+        style="cursor: not-allowed"
+      />
+    }
+  </svg>
+</div>
