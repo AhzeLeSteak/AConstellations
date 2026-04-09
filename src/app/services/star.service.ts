@@ -1,5 +1,5 @@
 import { computed, effect, Injectable, signal } from '@angular/core';
-import centers from './centers.json';
+import centers from '../centers.json';
 
 
 @Injectable({

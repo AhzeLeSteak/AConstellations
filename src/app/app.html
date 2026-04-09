@@ -1,29 +1,33 @@
-<div style="position: fixed; background-color: deeppink; top: 1em; right: 1em; z-index: 1000">
+<div style="position: fixed; background-color: deeppink; top: 1em; right: 1em; z-index: 1000; display: none;">
   <div>
     <input type="range" min="800" max="1400" step="100" [(ngModel)]="desired_width"/>
   </div>
   <span>{{ desired_width() }}</span><br/>
-  <span>{{ JSON.stringify({gridx: grid_width(), gridy: grid_height()}) }}</span><br/>
-  <span>{{ JSON.stringify({dx: dx(), dy: dy()}) }}</span>
+  <span>{{ JSON.stringify({camx: cam_x(), camy: cam_y()}) }}</span> <br/>
+  <span>{{ JSON.stringify({gw: grid_width(), gh: grid_height()}) }}</span> <br/>
 </div>
 
-<main (wheel)="scroll($event)"
+<main (wheel)="scroll($event.deltaX, $event.deltaY)"
       [style.--sky-width]="sky_width"
       [style.--sky-height]="sky_height"
       [style.--dx]="dx()"
       [style.--dy]="dy()"
-      [style.--grid-width]="grid_width().length"
-      [style.--grid-height]="grid_height().length"
+      [style.--gridx]="grid_width()"
+      [style.--gridy]="grid_height()"
       [style.--scale]="scale()"
+      (mousedown)="watchMouse.set(true)"
+      (mousemove)="watchMouse() && scroll(-$event.movementX, -$event.movementY)"
+      (mouseup)="watchMouse.set(false)"
 >
   @if (scale() > 0) {
-    @for (itemy of grid_height(); track itemy; let y = $index) {
-      @for (itemx of grid_width(); track itemx; let x = $index) {
-        <app-sky />
+    @for (item of grid(); track item.idx) {
+      @if (item.is_displayed) {
+        <app-sky/>
+      } @else {
+        <div class="sky hidden"></div>
       }
     }
   }
 
 </main>
-
 

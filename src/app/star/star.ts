@@ -1,6 +1,5 @@
-import { Component, computed, input, output } from '@angular/core';
-import { concatMap, delay, of, repeat } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, input, output } from '@angular/core';
+import { Oscillate } from '../services/oscillate';
 
 @Component({
   selector: 'app-star',
@@ -13,21 +12,13 @@ export class Star {
   public selected = input.required<boolean>();
   public onClick = output();
 
+  public oscillate = inject(Oscillate).getRandomOscillation()
+
   src = computed(() =>
     this.selected() ? 'selected.png' : `${this.star().size}${this.oscillate() ? 'A' : 'B'}.png`,
   );
 
   size = computed(() => 7);
 
-  private oscillate = toSignal(
-    of(true, false).pipe(
-      concatMap((x) => of(x).pipe(delay(this.randomTime()))),
-      repeat(),
-    ),
-    { initialValue: true },
-  );
 
-  private randomTime() {
-    return 1500 + Math.random() * 4500;
-  }
 }

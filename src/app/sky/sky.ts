@@ -1,7 +1,7 @@
 import centers from '../centers.json';
 import { Component, inject, input } from '@angular/core';
 import { Star } from '../star/star';
-import { StarService } from '../star.service';
+import { StarService } from '../services/star.service';
 
 @Component({
   selector: 'app-sky',
@@ -11,6 +11,6 @@ import { StarService } from '../star.service';
 })
 export class Sky {
   debugColor = input('black');
-  stars = centers
+  stars = centers;
   starService = inject(StarService);
 }
