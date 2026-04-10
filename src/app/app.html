@@ -7,7 +7,7 @@
   <span>{{ JSON.stringify({gw: grid_width(), gh: grid_height()}) }}</span> <br/>
 </div>
 
-<main (wheel)="scroll($event.deltaX, $event.deltaY)"
+<main (wheel)="scroll($event.deltaX, $event.deltaY, true)"
       [style.--sky-width]="sky_width"
       [style.--sky-height]="sky_height"
       [style.--dx]="dx()"
@@ -20,7 +20,7 @@
       (mouseup)="watchMouse.set(false)"
 >
   @if (scale() > 0) {
-    @for (item of grid(); track item.idx) {
+    @for (item of grid(); track item.is_displayed) {
       @if (item.is_displayed) {
         <app-sky/>
       } @else {

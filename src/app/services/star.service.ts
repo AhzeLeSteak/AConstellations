@@ -1,5 +1,6 @@
 import { computed, effect, Injectable, signal } from '@angular/core';
-import centers from '../centers.json';
+import centers from '../data/centers.json';
+import { sky_height, sky_width } from '../data/sky_size';
 
 
 @Injectable({
@@ -45,7 +46,6 @@ export class StarService {
       const toEncode = this.links()
         .map(([a, b]) => `${a},${b}`)
         .join('&');
-      console.log(JSON.stringify(toEncode));
       url.searchParams.set('path', btoa(toEncode));
       history.pushState(null, '', url);
     }
@@ -57,7 +57,6 @@ export class StarService {
       const currentSelectedStar = this.stars[this.selectedIndex()!];
       if (!this.linksExists(currentSelectedStar, newSelectedStart))
         this.links.update((links) => [...links, [starIndex, this.selectedIndex()!]]);
-      console.log(this.blueLinks());
     }
     this.selectedIndex.set(starIndex);
   }

@@ -4,5 +4,5 @@ main{
 
   transform: translate(calc(1px * var(--dx)), calc(1px * var(--dy))) scale(var(--scale));
   transform-origin: center;
-  transition: transform 200ms;
+  transition: transform 150ms linear;
 }
