@@ -4,5 +4,18 @@ main{
 
   transform: translate(calc(1px * var(--dx)), calc(1px * var(--dy))) scale(var(--scale));
   transform-origin: center;
-  transition: transform 150ms linear;
+  transition: transform 100ms linear;
+}
+
+.hud{
+  position: fixed;
+  top: 1em;
+  right: 1em;
+  z-index: 1000;
+  display: flex;
+  flex-direction: row;
+}
+
+.hud button{
+  padding: 12px;
 }

@@ -17,7 +17,7 @@
         stroke-width=".5"
       />
     }
-    @for (link of starService.blueLinks(); track link) {
+    @for (link of starService.blueLinks(); track link; let i = $index) {
       <line
         [attr.x1]="link.x1"
         [attr.y1]="link.y1"
@@ -32,7 +32,7 @@
         [attr.x2]="link.x2"
         [attr.y2]="link.y2"
         stroke="transparent"
-        (click)="starService.removeLink(link)"
+        (click)="starService.removeLink(i)"
         stroke-width="10"
         style="cursor: not-allowed"
       />
