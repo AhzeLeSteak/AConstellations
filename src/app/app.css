@@ -13,9 +13,27 @@ main{
   right: 1em;
   z-index: 1000;
   display: flex;
-  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width:180px;
+  height:36px;
+  padding: 4px 18px;
+  background-image:url('../../assets/slider_bg.png');
+  background-size: 100%;
 }
 
-.hud button{
-  padding: 12px;
+.slider{
+  flex-grow: 1;
+  -webkit-appearance: none !important;
+
+  background-image:url('../../assets/slider.png');
+  background-size: 100%;
+  background-color: transparent;
+}
+.slider::-webkit-slider-thumb{
+  -webkit-appearance: none !important;
+  width:32px;
+  height:36px;
+  background-size: 100%;
+  background-image:url('../../assets/slider_knob.png');
 }

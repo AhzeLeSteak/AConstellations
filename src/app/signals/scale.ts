@@ -1,8 +1,5 @@
 import { windowSize } from './windowSize';
-import { computed, Signal, signal } from '@angular/core';
-
-const max = 2;
-const min = -max;
+import { computed, Signal, signal, WritableSignal } from '@angular/core';
 
 export function scale(base_width: number, base_height: number){
   const window = windowSize();
@@ -16,16 +13,14 @@ export function scale(base_width: number, base_height: number){
     ratio += 0.8;
     return ww >= wh ? (ratio * ww) / base_width : (ratio * wh) / base_height;
   }) as Signal<number> & {
-    zoomIn: () => void;
-    zoomOut: () => void;
-    canZoomIn: () => boolean;
-    canZoomOut: () => boolean;
+    ratio: WritableSignal<number>;
+    min: number;
+    max: number;
   };
 
-  value.zoomIn = () => ratioDiff.update((x) => Math.min(max, x + 1));
-  value.zoomOut = () => ratioDiff.update((x) => Math.max(min, x - 1));
-  value.canZoomIn = () => ratioDiff() < max;
-  value.canZoomOut = () => ratioDiff() > min;
+  value.ratio = ratioDiff;
+  value.max = 3;
+  value.min = -value.max;
 
   return value;
 }
