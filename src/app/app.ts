@@ -3,14 +3,11 @@ import { Sky } from './sky/sky';
 import { FormsModule } from '@angular/forms';
 import { scale } from './signals/scale';
 import { sky_height, sky_width } from './data/sky_size';
-
-let isShiftPressed = false;
-document.addEventListener('keydown', (e) => (isShiftPressed = e.shiftKey));
-document.addEventListener('keyup', (e) => (isShiftPressed = e.shiftKey));
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [Sky, FormsModule],
+  imports: [Sky, FormsModule, NgClass],
   templateUrl: './app.html',
   styleUrl: './app.css',
   standalone: true,
@@ -46,11 +43,22 @@ export class App {
     });
   });
 
-  protected scroll(x: number, y: number, fromWheel = false) {
-    const reverse = fromWheel && isShiftPressed;
+  get isMobile() {
+    return (
+      'userAgentData' in navigator &&
+      typeof navigator.userAgentData === 'object' &&
+      navigator.userAgentData &&
+      'mobile' in navigator.userAgentData &&
+      !!navigator.userAgentData.mobile
+    );
+  }
+
+  get isHorizontal(){
+    return window.innerWidth > window.innerHeight;
+  }
+
+  protected scroll(x: number, y: number, reverse = false) {
     this.dx.update((dx) => dx - (reverse ? y : x) / this.scale());
     this.dy.update((dy) => dy - (reverse ? x : y) / this.scale());
   }
-
 }
-

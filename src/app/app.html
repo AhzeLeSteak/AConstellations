@@ -1,8 +1,8 @@
-<div class="hud">
+<div [ngClass]="{mobile: isMobile, horizontal: isHorizontal}" class="hud">
   <input [(ngModel)]="scale.ratio" [max]="scale.max" [min]="scale.min" class="slider" type="range">
 </div>
 
-<main (wheel)="scroll($event.deltaX, $event.deltaY, true)"
+<main (wheel)="scroll($event.deltaX, $event.deltaY, $event.shiftKey)"
       [style.--sky-width]="sky_width"
       [style.--sky-height]="sky_height"
       [style.--dx]="dx() * scale()"
