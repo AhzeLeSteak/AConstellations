@@ -1,4 +1,4 @@
-<div class="sky" [style.--debugbg]="debugColor()" (click)="starService.selectedIndex.set(null)">
+<div (click)="starService.selectedIndex.set(null)" class="sky">
   @for (center of stars; let i = $index; track i) {
     <app-star
       [star]="center"
@@ -19,6 +19,7 @@
     }
     @for (link of starService.blueLinks(); track link; let i = $index) {
       <line
+        class="blue"
         [attr.x1]="link.x1"
         [attr.y1]="link.y1"
         [attr.x2]="link.x2"

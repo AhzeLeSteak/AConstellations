@@ -7,7 +7,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 })
 class Oscillate {
 
-  private oscillations = new Array(15)
+  private oscillations = new Array(50)
     .fill(0)
     .map(() => toSignal(
       of(true, false).pipe(

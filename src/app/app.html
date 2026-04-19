@@ -1,5 +1,8 @@
 <div [ngClass]="{mobile: isMobile, horizontal: isHorizontal}" class="hud">
-  <input [(ngModel)]="scale.ratio" [max]="scale.max" [min]="scale.min" class="slider" type="range">
+  <div class="slider-wrap">
+    <input [(ngModel)]="scale.ratio" [max]="scale.max" [min]="scale.min" class="slider" type="range">
+  </div>
+  <button (click)="copyUrlToClipBoard()" class="share"></button>
 </div>
 
 <main (wheel)="scroll($event.deltaX, $event.deltaY, $event.shiftKey)"

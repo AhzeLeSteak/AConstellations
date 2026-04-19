@@ -1,8 +1,7 @@
-import { computed, effect, Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import centers from '../data/centers.json';
-import { sky_height, sky_width } from '../data/sky_size';
-
-const dist_threshold = 1500;
+import { Direction, get_dx, get_dy, getNearestStars } from '../data/distance_computation';
+import { pathLinkSignal } from '../signals/linksSignal';
 
 @Injectable({
   providedIn: 'root',
@@ -15,17 +14,10 @@ export class StarService {
   nearestStars = computed(() => {
     const selectedIndex = this.selectedIndex();
     if (selectedIndex === null) return [];
-    const selectedStar = this.stars[selectedIndex];
-    return this.stars
-      .map((s, i) => [i, ...dist_sqr(selectedStar, s)] as const)
-      .filter(
-        ([i, dist]) =>
-          i !== selectedIndex && dist < dist_threshold && !this.linksExists(i, selectedIndex),
-      )
-      .map(([i, _, dir]) => [i, dir] as const);
+    return this.getNearestStars(selectedIndex);
   });
 
-  links = signal<Array<[number, number, Direction]>>([]);
+  links = pathLinkSignal();
   blueLinks = computed<Link[]>(() =>
     this.links().flatMap(([index_a, index_b, dir]) => this.makeLink(index_a, index_b, dir)),
   );
@@ -83,52 +75,12 @@ export class StarService {
     this.links.update((arr) => arr.filter((_, i) => i !== linkIndex));
   }
 
-  private linksExists(ia: number, ib: number) {
+  public getNearestStars(starIndex: number) {
+    return getNearestStars(starIndex).filter(([i]) => !this.linksExists(starIndex, i));
+  }
+
+  private linksExists(ia: number, ib: number): boolean {
     return this.links().some(([a, b]) => (a === ia && b === ib) || (a === ib && b === ia));
   }
 }
 
-enum Direction {
-  NONE = 0,
-  NORTH = 1,
-  SOUTH = 2,
-  EAST = 4,
-  WEST = 8,
-  NORTH_EAST = Direction.NORTH | Direction.EAST,
-  NORTH_WEST = Direction.NORTH | Direction.WEST,
-  SOUTH_EAST = Direction.SOUTH | Direction.EAST,
-  SOUTH_WEST = Direction.SOUTH | Direction.WEST,
-}
-
-function dist_sqr(selected: Point, other: Point): [number, Direction] {
-  for (let dir of [
-    Direction.NONE,
-    Direction.NORTH,
-    Direction.SOUTH,
-    Direction.EAST,
-    Direction.WEST,
-    Direction.NORTH_EAST,
-    Direction.NORTH_WEST,
-    Direction.SOUTH_EAST,
-    Direction.SOUTH_WEST,
-  ]) {
-    const dx = get_dx(dir);
-    const dy = get_dy(dir);
-    const dist_in_same_space = (selected.x - other.x + dx) ** 2 + (selected.y - other.y + dy) ** 2;
-    if (dist_in_same_space <= dist_threshold) return [dist_in_same_space, dir];
-  }
-  return [Infinity, Direction.NONE];
-}
-
-function get_dx(dir: Direction) {
-  return (dir & Direction.WEST ? -1 : dir & Direction.EAST ? 1 : 0) * sky_width;
-}
-
-function get_dy(dir: Direction) {
-  return (dir & Direction.NORTH ? -1 : dir & Direction.SOUTH ? 1 : 0) * sky_height;
-}
-
-export type Point = {
-  x: number;
-  y: number;
-};

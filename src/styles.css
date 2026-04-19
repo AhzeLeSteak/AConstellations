@@ -15,7 +15,6 @@ body{
 }
 
 .sky{
-  background-color: var(--debugbg);
   height: calc(1px * var(--sky-height));
   aspect-ratio: calc(var(--sky-width) / var(--sky-height));
   position: relative;

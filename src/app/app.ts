@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Sky } from './sky/sky';
 import { FormsModule } from '@angular/forms';
 import { scale } from './signals/scale';
-import { sky_height, sky_width } from './data/sky_size';
+import { sky_height, sky_width } from './data/distance_computation';
 import { NgClass } from '@angular/common';
 
 @Component({
@@ -14,11 +14,11 @@ import { NgClass } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
-  dx = signal(0);
-  dy = signal(0);
-
   sky_width = sky_width;
   sky_height = sky_height;
+
+  dx = signal(0);
+  dy = signal(0);
 
   scale = scale(sky_width, sky_height);
 
@@ -31,17 +31,21 @@ export class App {
   grid = computed(() => {
     const gx = this.grid_width();
     const gy = this.grid_height();
-    let i = 0;
+    let counter = 0;
     return new Array(gx * gy).fill(0).map((_, i) => {
       const x = (i % gx) - (gx - 1) / 2;
       const y = ((i / gx) | 0) - (gy - 1) / 2;
       const is_displayed = Math.abs(y - this.cam_y()) <= 1 && Math.abs(x - this.cam_x()) <= 1;
       return {
-        idx: is_displayed ? i++ : `${x}_${y}`,
+        idx: is_displayed ? (counter++).toString() : `${x}_${y}`,
         is_displayed,
       };
     });
   });
+
+  get isHorizontal() {
+    return window.innerWidth > window.innerHeight;
+  }
 
   get isMobile() {
     return (
@@ -53,12 +57,12 @@ export class App {
     );
   }
 
-  get isHorizontal(){
-    return window.innerWidth > window.innerHeight;
-  }
-
   protected scroll(x: number, y: number, reverse = false) {
     this.dx.update((dx) => dx - (reverse ? y : x) / this.scale());
     this.dy.update((dy) => dy - (reverse ? x : y) / this.scale());
+  }
+
+  protected async copyUrlToClipBoard() {
+    await navigator.clipboard.writeText(window.location.href);
   }
 }

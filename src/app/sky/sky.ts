@@ -12,7 +12,6 @@ import { StarService } from '../services/star.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Sky {
-  debugColor = input('black');
   stars = centers;
   starService = inject(StarService);
 }
